@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CIS440 - Home</title>
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="js/post-scripts.js"></script>
+    <meta name="theme-color" content="#7952b3">
+    <!-- Custom styles for this template -->
+    <link href="css/main.css" rel="stylesheet">
+    <link href="css/home.css" rel="stylesheet">
+    <link href="css/post.css" rel="stylesheet">
+</head>
+<body class="text-center">
+    <div class="titlecontainer"></div>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-secondary navbar sticky-top">
+            <a class="navbar-brand" href="#">Hi <%= username %></a>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <form action="/home" method="get" class="nav-item nav-link">
+                        <input type="submit" class="nav-item nav-link" style="font-weight: bold;" value="Home"></input>
+                    </form>
+                    <form action="/admin" method="get" class="nav-item nav-link">
+                        <input type="submit" class="nav-item nav-link" value="Admin"></input>
+                    </form>
+                    <form action="/logout" method="get" class="nav-item nav-link">
+                        <input type="submit" class="nav-item nav-link" value="Logout"></input>
+                    </form>
+                </div>
+            </div>
+        </nav>
+        <div id="homePanel" class="contentPanel container row-fluid">
+            <div id="post" class='post-body'>
+                <input id='postId' type="text" hidden value="<%= data.UserPostID %>" />
+                <h1 class="h3 mb-3 fw-normal row d-flex justify-content-center" style="padding-top: 30px;"><%= data.SubjectLine %></h1>
+                <h5 style="font-weight: normal; text-decoration: underline; text-align: center; padding-bottom: 15px;">By: <%= data.PostUser %></h5>
+                <p class='post-body'><%= data.PostContent %></p>
+                <button class="small comment-meta post-reply" onclick="openModal('comment',<%= data.UserPostID %>)">Comment</button>
+            </div>
+            <h1 class="h3 mb-3 fw-normal row d-flex justify-content-center">Comments</h1>
+            <div class="comment mb-2 row">
+                <% comments.forEach(function(c) {%>
+                <div class="comment-content col-md-11 col-sm-10">
+                    <h6 class="small comment-meta"><span><%=c.DisplayName %> 
+                        <% if(c.BadgeTypeID == 3) {%> 
+                            <span class="badge badge-warning">Manager</span>
+                        <%} else if(c.BadgeTypeID == 4) {%>  
+                            <span class="badge badge-primary">Admin</span>
+                        <% } %>
+                    </span> : <%=c.DateCreated %></h6>
+                    <div class="comment-body" id="<%= c.CommentID %>">
+                        <p><%=c.CommentContent %><br>
+                            <% if(reply) {%> 
+                                <button class="small comment-meta comment-reply" onclick="openModal('reply',<%=c.CommentID %>)">Reply</button>
+                            <% } %>
+                            <input id="<%= c.CommentID %>-thumbs-up" type='image' alt='thumbs up' onclick="userReact(<%=c.CommentID %>, 1)" src='/images/hand-thumbs-up.svg'>
+                            <% if(c.TotalThumbsUp == null) {%>
+                                <span id="<%= c.CommentID %>-total-up" style="font-weight: normal;">0</span>
+                            <% } else {%>
+                                <span id="<%= c.CommentID %>-total-up" style="font-weight: normal;"><%=c.TotalThumbsUp %></span>
+                            <% } %>
+                            </input>
+                            <input id="<%= c.CommentID %>-thumbs-down" type='image' alt='thumbs down' onclick="userReact(<%=c.CommentID %>, 2)" src='/images/hand-thumbs-down.svg'> 
+                            <% if(c.TotalThumbsDown == null) {%>
+                                <span id="<%= c.CommentID %>-total-down" style="font-weight: normal;">0</span>
+                            <% } else {%>
+                                <span id="<%= c.CommentID %>-total-down" style="font-weight: normal;"><%=c.TotalThumbsDown %></span>
+                            <% } %>
+                            </input>
+                        </p>
+                        <% if(c.ReplyContent !== null) {%>
+                            <div style="padding-left: 5%;"> 
+                                <h6 class="small comment-meta"><span><%=c.ReplyDisplayName %> 
+                                    <% if(c.ReplyBadgeTypeID == 3) {%> 
+                                        <span class="badge badge-warning">Manager</span>
+                                    <%} else if(c.ReplyBadgeTypeID == 4) {%>  
+                                        <span class="badge badge-primary">Admin</span>
+                                    <% } %>
+                                </span> : <%=c.ReplyCreated %></h6>
+                                <div class="reply-comment-body">
+                                    <p><%=c.ReplyContent %><br>
+                                    </p>
+                                </div>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+                <% }); %>
+                <% if(comments.length < 1) {%>
+                    <p style="margin: 0 auto;">No Comments</p>
+                <% } %>
+            </div>
+            <div id="replyModal" class="modal">
+                <div class="modal-content">
+                    <span class="close cursor" onclick="closeModal()" style="color: black;">&times;</span>
+                    <form action="/comment" method="post">
+                        <h1 id="replyTitle" class="h3 mb-3 fw-normal">Post Comment</h1>
+                        <input type="text" hidden class="form-control-plaintext" id="staticReplyId" value="example"></input>
+                        <input type="text" hidden class="form-control-plaintext" id="staticReplyType" value="example"></input>
+                        <label id ='replyLabel' style="padding-bottom: 10px;">Comment Content</label>
+                        <textarea class="form-control" id="staticReplyBody" rows="10" style="margin: 0 auto; max-width: 300px; margin-bottom: 10px;"></textarea>
+                        <button class="w-100 btn btn-lg btn-primary" style="margin-left: 0; margin-top: 10px; border-radius: 0px;" onclick="submitComment(this.form)">Submit</button>
+                    </form>
+                </div>
+            </div>
+      </body>
+      <script type='text/javascript'>
+        var elemsLength = document.getElementsByClassName('comment-body').length;
+        var elems = document.getElementsByClassName('comment-body');
+        var post = document.getElementById("postId").value;
+        var reactions = getMyReactions(post, function(result) {
+            data = JSON.parse(result);
+            console.log(data);
+            for(var i=0; i<elemsLength; i++) {
+                var comment = document.getElementById(elems[i].id);
+                for(var j=0; j<data.length; j++) {
+                    var commentLike = document.getElementById(elems[i].id+'-thumbs-up');
+                    var commentDislike = document.getElementById(elems[i].id+'-thumbs-down');
+                    if(data[j].UserCommentID == comment.id && data[j].ReactionTypeID == 1) {
+                        commentLike.src = '/images/hand-thumbs-up-fill.svg'
+                        console.log(commentLike.src);
+                    } else if(data[j].UserCommentID == comment.id && data[j].ReactionTypeID == 2) {
+                        commentDislike.src = '/images/hand-thumbs-down-fill.svg'
+                        console.log(commentLike.src);
+                    }
+                }
+            }
+        });
+        
+        console.log(elemsLength);
+
+        /*
+        for(var i=0; i<=elemsLength; i++) {
+            var like = document.getElementById('comment-'+i+'thumbs-up');
+        }
+        */
+      </script>
+</html>
