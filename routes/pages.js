@@ -7,11 +7,11 @@ const router = express.Router();
 const notification = require('../utils/email-utils');
 
 router.get('/', (req, res, next) => {
-    res.redirect('/index');
+    res.render('index.ejs');
 });
 
 router.get('/index', (req, res, next) => {
-    res.render('index.ejs');
+    res.redirect('/');
 });
 
 module.exports = router;

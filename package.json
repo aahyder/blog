@@ -1,21 +1,20 @@
 {
-  "name": "cis440-group3",
+  "name": "chrishigh.me",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "the chrishigh.me blog",
+  "main": "index.ejs",
   "scripts": {
-    "devStart": "nodemon server.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/aahyder/cis440-group3.git"
+    "url": "git+https://github.com/aahyder/blog.git"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/aahyder/cis440-group3/issues"
+    "url": "https://github.com/aahyder/blog/issues"
   },
-  "homepage": "https://github.com/aahyder/cis440-group3#readme",
+  "homepage": "https://github.com/aahyder/blog#readme",
   "dependencies": {
     "bcrypt": "^5.0.0",
     "dotenv": "^8.2.0",
@@ -24,7 +23,6 @@
     "express-flash": "0.0.2",
     "express-session": "^1.17.1",
     "mysql": "^2.18.1",
-    "nodemailer": "^6.4.18",
-    "nodemon": "^2.0.7"
+    "nodemailer": "^6.4.18"
   }
 }
