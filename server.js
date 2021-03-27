@@ -4,7 +4,7 @@ const express = require('express');
 const path = require('path');
 const pageRouter = require('./routes/pages');
 const app = express();
-const port = 3000;
+const port = 80;
 
 // intialize app
 app.set('views', path.join(__dirname, 'views'));
